@@ -1,1 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>高考全学科 AI 学习平台</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,"Microsoft YaHei",sans-serif;background:#f3f6fc;color:#243047}
+header{background:linear-gradient(135deg,#2457d6,#713ee8);color:white;padding:25px 18px}
+header h1{margin:0 0 10px;font-size:25px}
+header p{margin:0;line-height:1.7}
+main{max-width:850px;margin:auto;padding:16px}
+.card{background:white;border-radius:15px;padding:18px;margin-bottom:16px;box-shadow:0 3px 12px #17255410}
+h2{font-size:19px;margin:0 0 14px}
+.subjects{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.subject{border:1px solid #e1e7f2;border-radius:12px;padding:15px 4px;background:#fff;font-size:15px;cursor:pointer}
+.subject:active,.subject:hover{background:#eaf0ff}
+button{border:0;border-radius:9px;padding:11px 15px;background:#315bdc;color:white;font-size:15px;cursor:pointer}
+input,textarea,select{width:100%;padding:12px;margin:6px 0 12px;border:1px solid #d4dbea;border-radius:9px;font-size:15px}
+textarea{min-height:100px;resize:vertical}
+.small{color:#718096;font-size:13px;line-height:1.7}
+#result{white-space:pre-wrap;line-height:1.8;margin-top:12px}
+.tools{display:flex;flex-wrap:wrap;gap:8px}
+.tools button{background:#edf1ff;color:#294fc2}
+footer{text-align:center;padding:20px;color:#7a8598;font-size:13px}
+</style>
+</head>
+<body>
+<header>
+<h1>🎓 高考全学科 AI 学习平台</h1>
+<p>高中全科 · 日语学习 · 每日练习 · 错题整理</p>
+</header>
+<main>
+<section class="card">
+<h2>📚 选择学习科目</h2>
+<div class="subjects">
+<button class="subject" onclick="choose('语文')">📖 语文</button>
+<button class="subject" onclick="choose('数学')">📐 数学</button>
+<button class="subject" onclick="choose('英语')">🔤 英语</button>
+<button class="subject" onclick="choose('物理')">⚛️ 物理</button>
+<button class="subject" onclick="choose('化学')">🧪 化学</button>
+<button class="subject" onclick="choose('生物')">🌱 生物</button>
+<button class="subject" onclick="choose('政治')">🏛️ 政治</button>
+<button class="subject" onclick="choose('历史')">📜 历史</button>
+<button class="subject" onclick="choose('地理')">🌏 地理</button>
+<button class="subject" onclick="choose('日语')">🇯🇵 日语</button>
+<button class="subject" onclick="choose('高考综合')">📝 综合</button>
+<button class="subject" onclick="choose('学习规划')">📅 规划</button>
+</div>
+<p class="small" id="selected">当前科目：数学</p>
+</section>
 
+<section class="card">
+<h2>✏️ 学习助手</h2>
+<label for="question">输入题目、知识点或日语语法：</label>
+<textarea id="question" placeholder="例如：讲解椭圆的标准方程；解释日语 に対して 的用法"></textarea>
+<div class="tools">
+<button onclick="explain()">生成学习提示</button>
+<button onclick="saveWrong()">保存到本机错题</button>
+<button onclick="showWrong()">查看错题</button>
+</div>
+<div id="result"></div>
+<p class="small">当前版本提供本地学习提示与错题记录。要实现真正的 AI 对话，需要后续连接 AI 服务。</p>
+</section>
+
+<section class="card">
+<h2>🗓️ 每日学习计划</h2>
+<select id="plan">
+<option>数学基础与练习</option>
+<option>语文阅读与作文</option>
+<option>英语词汇与阅读</option>
+<option>物理公式与实验</option>
+<option>化学方程式与推断</option>
+<option>生物知识点复习</option>
+<option>政治主观题训练</option>
+<option>历史材料题训练</option>
+<option>地理图表题训练</option>
+<option>日语词汇与语法</option>
+</select>
+<button onclick="makePlan()">生成今日计划</button>
+<div id="planResult"></div>
+</section>
+
+<section class="card">
+<h2>📌 学习提醒</h2>
+<p>① 先理解知识点，再做题。</p>
+<p>② 做错的题及时记录，隔天重新练习。</p>
+<p>③ 定期复习公式、单词和易错知识点。</p>
+</section>
+</main>
+<footer>高考学习平台 · 手机网页体验版</footer>
+<script>
+let subject='数学';
+function choose(s){
+subject=s;
+document.getElementById('selected').textContent='当前科目：'+s;
+}
+function explain(){
+let q=document.getElementById('question').value.trim();
+let r=document.getElementById('result');
+if(!q){r.textContent='请先输入题目或知识点。';return;}
+let tips={
+'数学':'先写出已知条件，再确定所用公式，逐步计算，最后检查答案。',
+'语文':'先理解材料主旨，再找关键词和文本依据，按题目要求组织答案。',
+'英语':'先判断句子结构和时态，再结合上下文分析词汇与语法。',
+'物理':'先画出研究对象的示意图，分析受力或运动过程，再选择公式。',
+'化学':'先确认反应物和生成物，再检查反应条件、方程式与守恒关系。',
+'生物':'先找题干中的核心概念，再联系教材知识和实验变量。',
+'政治':'先提炼材料关键词，再联系教材观点，结合材料分点作答。',
+'历史':'先判断时间、背景和史料类型，再从材料中提取有效信息。',
+'地理':'先定位区域，再分析自然条件、人类活动和因果关系。',
+'日语':'先识别语法接续，再判断句中含义、语气和使用场景。',
+'高考综合':'先拆分题目条件，再确定考查模块，逐步解决。',
+'学习规划':'先明确目标，再按难度分配时间，完成后检查效果。'
+};
+r.textContent='【'+subject+'学习提示】\n题目：'+q+'\n\n建议步骤：\n1. '+tips[subject]+'\n2. 写出已知条件与需要求解的内容。\n3. 按步骤完成推导或分析。\n4. 检查结论，并记录容易出错的地方。\n\n提示：这只是学习方法建议，不是 AI 自动解题结果。你也可以把题目发到 ChatGPT 中获取具体讲解。';
+}
+function saveWrong(){
+let q=document.getElementById('question').value.trim();
+if(!q){alert('请先输入题目');return;}
+let arr=JSON.parse(localStorage.getItem('gaokao_wrong')||'[]');
+arr.push({subject:subject,q:q,time:new Date().toLocaleString()});
+localStorage.setItem('gaokao_wrong',JSON.stringify(arr));
+alert('已保存到当前浏览器的本机错题记录');
+}
+function showWrong(){
+let arr=JSON.parse(localStorage.getItem('gaokao_wrong')||'[]');
+document.getElementById('result').textContent=arr.length?arr.map((x,i)=>(i+1)+'. ['+x.subject+'] '+x.q+' ('+x.time+')').join('\n\n'):'目前还没有错题记录。';
+}
+function makePlan(){
+let p=document.getElementById('plan').value;
+document.getElementById('planResult').innerHTML='<p>今日任务：'+p+'</p><p>① 复习知识点 20 分钟</p><p>② 完成练习 30 分钟</p><p>③ 整理错题 10 分钟</p>';
+}
+</script>
+</body>
+</html>
