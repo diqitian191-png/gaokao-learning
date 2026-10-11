@@ -2,136 +2,262 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>高考全学科 AI 学习平台</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>高中全学科AI学习助手</title>
 <style>
-*{box-sizing:border-box}
-body{margin:0;font-family:Arial,"Microsoft YaHei",sans-serif;background:#f3f6fc;color:#243047}
-header{background:linear-gradient(135deg,#2457d6,#713ee8);color:white;padding:25px 18px}
-header h1{margin:0 0 10px;font-size:25px}
-header p{margin:0;line-height:1.7}
-main{max-width:850px;margin:auto;padding:16px}
-.card{background:white;border-radius:15px;padding:18px;margin-bottom:16px;box-shadow:0 3px 12px #17255410}
-h2{font-size:19px;margin:0 0 14px}
-.subjects{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.subject{border:1px solid #e1e7f2;border-radius:12px;padding:15px 4px;background:#fff;font-size:15px;cursor:pointer}
-.subject:active,.subject:hover{background:#eaf0ff}
-button{border:0;border-radius:9px;padding:11px 15px;background:#315bdc;color:white;font-size:15px;cursor:pointer}
-input,textarea,select{width:100%;padding:12px;margin:6px 0 12px;border:1px solid #d4dbea;border-radius:9px;font-size:15px}
-textarea{min-height:100px;resize:vertical}
-.small{color:#718096;font-size:13px;line-height:1.7}
-#result{white-space:pre-wrap;line-height:1.8;margin-top:12px}
-.tools{display:flex;flex-wrap:wrap;gap:8px}
-.tools button{background:#edf1ff;color:#294fc2}
-footer{text-align:center;padding:20px;color:#7a8598;font-size:13px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;background:#f4f6f9;color:#333;font-size:15px;line-height:1.5;display:flex;min-height:100vh}
+
+/* 左侧侧边栏 */
+.sidebar{width:60px;background:linear-gradient(180deg,#667eea 0%,#764ba2 100%);display:flex;flex-direction:column;align-items:center;padding-top:15px;position:fixed;top:0;left:0;height:100%;z-index:200;transition:width .2s;overflow:hidden}
+.sidebar:hover{width:160px}
+.sidebar .logo{font-size:24px;margin-bottom:20px;cursor:pointer}
+.sidebar .nav-btn{width:100%;padding:12px 0;text-align:center;color:rgba(255,255,255,.85);cursor:pointer;font-size:18px;white-space:nowrap;transition:background .15s}
+.sidebar .nav-btn:hover,.sidebar .nav-btn.active{background:rgba(255,255,255,.18);color:#fff}
+.sidebar .nav-btn .nav-text{font-size:14px;margin-left:8px;opacity:0;transition:opacity .15s}
+.sidebar:hover .nav-btn .nav-text{opacity:1}
+
+/* 主内容区 */
+.main{margin-left:60px;flex:1;min-width:0}
+
+/* 顶部header */
+.header{background:#fff;padding:15px 20px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 1px 4px rgba(0,0,0,.06);position:sticky;top:0;z-index:100}
+.header h2{font-size:18px;color:#764ba2}
+.header-right{display:flex;align-items:center;gap:12px}
+.header-stat{font-size:13px;color:#888;background:#f0f4ff;padding:6px 12px;border-radius:20px}
+.header-search{padding:8px 14px;border:1px solid #e0e0e0;border-radius:20px;font-size:13px;width:180px;outline:none}
+.header-search:focus{border-color:#764ba2}
+
+/* 页面容器 */
+.page{display:none;padding:20px}
+.page.active{display:block}
+
+/* 卡片 */
+.card{background:#fff;border-radius:14px;padding:18px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.card-title{font-size:16px;font-weight:700;margin-bottom:12px;padding-left:10px;border-left:4px solid #764ba2}
+
+/* 统计卡片网格 */
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px}
+.stat-card{background:linear-gradient(135deg,#f0f4ff,#e8ecff);border-radius:12px;padding:16px;text-align:center}
+.stat-card .num{font-size:28px;font-weight:700;color:#764ba2}
+.stat-card .label{font-size:13px;color:#888;margin-top:4px}
+
+/* 功能入口网格 */
+.func-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.func-item{background:#fff;border:1px solid #eee;border-radius:12px;padding:20px;text-align:center;cursor:pointer;transition:all .15s}
+.func-item:hover{border-color:#764ba2;transform:translateY(-2px);box-shadow:0 4px 12px rgba(118,75,162,.12)}
+.func-item .icon{font-size:32px;margin-bottom:8px}
+.func-item .name{font-weight:600;font-size:14px}
+
+/* 学科标签 */
+.subject-tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.subject-tab{padding:6px 16px;border-radius:20px;font-size:13px;cursor:pointer;background:#f0f0f0;color:#666;border:none;transition:all .15s}
+.subject-tab.active{background:#764ba2;color:#fff}
+
+/* 知识点列表 */
+.kp-list{display:grid;gap:10px}
+.kp-item{background:#fafbfc;border:1px solid #eee;border-radius:10px;padding:14px;cursor:pointer;transition:all .15s}
+.kp-item:hover{border-color:#764ba2;background:#f8f6ff}
+.kp-item .kp-tag{display:inline-block;font-size:11px;background:#764ba2;color:#fff;padding:2px 8px;border-radius:10px;margin-right:8px}
+.kp-item .kp-title{font-weight:600;font-size:15px}
+.kp-item .kp-desc{font-size:13px;color:#888;margin-top:4px}
+
+/* 实验/题型卡片 */
+.exp-card,.type-card{background:#fff;border:1px solid #eee;border-radius:12px;padding:16px;margin-bottom:12px}
+.exp-card h4,.type-card h4{font-size:15px;margin-bottom:8px;color:#764ba2}
+.exp-card p,.type-card p{font-size:14px;color:#555;line-height:1.6}
+
+/* 题目 */
+.question-box{margin-bottom:20px}
+.question-text{font-size:16px;font-weight:500;margin-bottom:14px}
+.option-list{display:flex;flex-direction:column;gap:10px}
+.option{padding:12px 15px;border:1px solid #eee;border-radius:10px;cursor:pointer;background:#fff;transition:all .2s}
+.option.selected{border-color:#764ba2;background:#f3f0ff}
+.option.correct{border-color:#2ed573;background:#eafbf1;color:#059669}
+.option.wrong{border-color:#ff4757;background:#ffeef0;color:#d63031}
+
+/* 按钮 */
+.btn{display:inline-block;padding:10px 24px;background:#764ba2;color:#fff;border:none;border-radius:25px;font-size:14px;font-weight:600;cursor:pointer;transition:background .15s}
+.btn:hover{background:#5f3dc4}
+.btn.outline{background:transparent;border:1px solid #764ba2;color:#764ba2}
+.btn.danger{background:#ff4757}
+.btn.sm{padding:6px 16px;font-size:13px}
+
+/* 化学键盘 */
+.kb-section{margin-bottom:16px}
+.kb-section h4{font-size:14px;margin-bottom:8px;color:#666}
+.kb-keys{display:flex;flex-wrap:wrap;gap:6px}
+.kb-key{padding:8px 12px;background:#f0f4ff;border:1px solid #d0d8ff;border-radius:8px;cursor:pointer;font-size:14px;font-weight:500;transition:all .15s}
+.kb-key:hover{background:#764ba2;color:#fff;border-color:#764ba2}
+
+/* 总结清单 */
+.summary-list{list-style:none}
+.summary-list li{padding:10px 0;border-bottom:1px solid #f0f0f0;font-size:14px;display:flex;align-items:flex-start}
+.summary-list li::before{content:"⚠️";margin-right:8px;flex-shrink:0}
+.summary-list li.ok::before{content:"✅"}
+
+/* 学习日志 */
+.log-input{width:100%;padding:12px;border:1px solid #eee;border-radius:10px;font-size:14px;resize:vertical;min-height:80px;outline:none;margin-bottom:10px}
+.log-input:focus{border-color:#764ba2}
+.log-list{max-height:300px;overflow-y:auto}
+.log-item{padding:10px;border-bottom:1px solid #f5f5f5;font-size:14px}
+.log-item .log-time{font-size:12px;color:#aaa}
+
+/* 错题本 */
+.wrong-item{padding:12px;border-bottom:1px solid #f0f0f0}
+.wrong-item .w-subject{font-size:12px;color:#764ba2;margin-bottom:4px}
+.wrong-item .w-question{font-size:14px;margin-bottom:4px}
+.wrong-item .w-answer{font-size:13px;color:#ff4757}
+.wrong-item .w-explain{font-size:13px;color:#666;margin-top:4px}
+
+/* AI聊天 */
+.chat-box{max-height:300px;overflow-y:auto;margin-bottom:12px;padding:12px;background:#fafbfc;border-radius:10px}
+.chat-msg{margin-bottom:10px;padding:10px 14px;border-radius:12px;font-size:14px;max-width:85%}
+.chat-msg.user{background:#764ba2;color:#fff;margin-left:auto;border-bottom-right-radius:4px}
+.chat-msg.ai{background:#f0f4ff;margin-right:auto;border-bottom-left-radius:4px}
+
+/* 响应式 */
+@media(max-width:600px){
+  .sidebar{width:50px}
+  .sidebar:hover{width:140px}
+  .main{margin-left:50px}
+  .header{flex-wrap:wrap;gap:8px}
+  .header-search{width:100%;order:3}
+  .stat-grid,.func-grid{grid-template-columns:repeat(2,1fr)}
+}
 </style>
 </head>
 <body>
-<header>
-<h1>🎓 高考全学科 AI 学习平台</h1>
-<p>高中全科 · 日语学习 · 每日练习 · 错题整理</p>
-</header>
-<main>
-<section class="card">
-<h2>📚 选择学习科目</h2>
-<div class="subjects">
-<button class="subject" onclick="choose('语文')">📖 语文</button>
-<button class="subject" onclick="choose('数学')">📐 数学</button>
-<button class="subject" onclick="choose('英语')">🔤 英语</button>
-<button class="subject" onclick="choose('物理')">⚛️ 物理</button>
-<button class="subject" onclick="choose('化学')">🧪 化学</button>
-<button class="subject" onclick="choose('生物')">🌱 生物</button>
-<button class="subject" onclick="choose('政治')">🏛️ 政治</button>
-<button class="subject" onclick="choose('历史')">📜 历史</button>
-<button class="subject" onclick="choose('地理')">🌏 地理</button>
-<button class="subject" onclick="choose('日语')">🇯🇵 日语</button>
-<button class="subject" onclick="choose('高考综合')">📝 综合</button>
-<button class="subject" onclick="choose('学习规划')">📅 规划</button>
-</div>
-<p class="small" id="selected">当前科目：数学</p>
-</section>
 
-<section class="card">
-<h2>✏️ 学习助手</h2>
-<label for="question">输入题目、知识点或日语语法：</label>
-<textarea id="question" placeholder="例如：讲解椭圆的标准方程；解释日语 に対して 的用法"></textarea>
-<div class="tools">
-<button onclick="explain()">生成学习提示</button>
-<button onclick="saveWrong()">保存到本机错题</button>
-<button onclick="showWrong()">查看错题</button>
-</div>
-<div id="result"></div>
-<p class="small">当前版本提供本地学习提示与错题记录。要实现真正的 AI 对话，需要后续连接 AI 服务。</p>
-</section>
+<!-- 左侧侧边栏 -->
+<nav class="sidebar">
+  <div class="logo" onclick="goPage('home')">📚</div>
+  <div class="nav-btn active" data-page="home" onclick="goPage('home')"><span>🏠</span><span class="nav-text">首页</span></div>
+  <div class="nav-btn" data-page="knowledge" onclick="goPage('knowledge')"><span>📖</span><span class="nav-text">知识手册</span></div>
+  <div class="nav-btn" data-page="experiment" onclick="goPage('experiment')"><span>🧪</span><span class="nav-text">实验大全</span></div>
+  <div class="nav-btn" data-page="type" onclick="goPage('type')"><span>✏️</span><span class="nav-text">题型精讲</span></div>
+  <div class="nav-btn" data-page="quiz" onclick="goPage('quiz')"><span>📝</span><span class="nav-text">刷题中心</span></div>
+  <div class="nav-btn" data-page="wrong" onclick="goPage('wrong')"><span>❌</span><span class="nav-text">错题本</span></div>
+  <div class="nav-btn" data-page="summary" onclick="goPage('summary')"><span>📋</span><span class="nav-text">考前总结</span></div>
+  <div class="nav-btn" data-page="keyboard" onclick="goPage('keyboard')"><span>⌨️</span><span class="nav-text">化学键盘</span></div>
+  <div class="nav-btn" data-page="log" onclick="goPage('log')"><span>📓</span><span class="nav-text">学习日志</span></div>
+</nav>
 
-<section class="card">
-<h2>🗓️ 每日学习计划</h2>
-<select id="plan">
-<option>数学基础与练习</option>
-<option>语文阅读与作文</option>
-<option>英语词汇与阅读</option>
-<option>物理公式与实验</option>
-<option>化学方程式与推断</option>
-<option>生物知识点复习</option>
-<option>政治主观题训练</option>
-<option>历史材料题训练</option>
-<option>地理图表题训练</option>
-<option>日语词汇与语法</option>
-</select>
-<button onclick="makePlan()">生成今日计划</button>
-<div id="planResult"></div>
-</section>
+<!-- 主内容区 -->
+<div class="main">
+  <!-- 顶部header -->
+  <div class="header">
+    <h2 id="page-title">首页总览</h2>
+    <div class="header-right">
+      <span class="header-stat">今日刷题 <b id="today-count">0</b></span>
+      <input class="header-search" id="global-search" placeholder="搜索知识点/题目..." onkeyup="globalSearch(event)">
+    </div>
+  </div>
 
-<section class="card">
-<h2>📌 学习提醒</h2>
-<p>① 先理解知识点，再做题。</p>
-<p>② 做错的题及时记录，隔天重新练习。</p>
-<p>③ 定期复习公式、单词和易错知识点。</p>
-</section>
-</main>
-<footer>高考学习平台 · 手机网页体验版</footer>
-<script>
-let subject='数学';
-function choose(s){
-subject=s;
-document.getElementById('selected').textContent='当前科目：'+s;
-}
-function explain(){
-let q=document.getElementById('question').value.trim();
-let r=document.getElementById('result');
-if(!q){r.textContent='请先输入题目或知识点。';return;}
-let tips={
-'数学':'先写出已知条件，再确定所用公式，逐步计算，最后检查答案。',
-'语文':'先理解材料主旨，再找关键词和文本依据，按题目要求组织答案。',
-'英语':'先判断句子结构和时态，再结合上下文分析词汇与语法。',
-'物理':'先画出研究对象的示意图，分析受力或运动过程，再选择公式。',
-'化学':'先确认反应物和生成物，再检查反应条件、方程式与守恒关系。',
-'生物':'先找题干中的核心概念，再联系教材知识和实验变量。',
-'政治':'先提炼材料关键词，再联系教材观点，结合材料分点作答。',
-'历史':'先判断时间、背景和史料类型，再从材料中提取有效信息。',
-'地理':'先定位区域，再分析自然条件、人类活动和因果关系。',
-'日语':'先识别语法接续，再判断句中含义、语气和使用场景。',
-'高考综合':'先拆分题目条件，再确定考查模块，逐步解决。',
-'学习规划':'先明确目标，再按难度分配时间，完成后检查效果。'
-};
-r.textContent='【'+subject+'学习提示】\n题目：'+q+'\n\n建议步骤：\n1. '+tips[subject]+'\n2. 写出已知条件与需要求解的内容。\n3. 按步骤完成推导或分析。\n4. 检查结论，并记录容易出错的地方。\n\n提示：这只是学习方法建议，不是 AI 自动解题结果。你也可以把题目发到 ChatGPT 中获取具体讲解。';
-}
-function saveWrong(){
-let q=document.getElementById('question').value.trim();
-if(!q){alert('请先输入题目');return;}
-let arr=JSON.parse(localStorage.getItem('gaokao_wrong')||'[]');
-arr.push({subject:subject,q:q,time:new Date().toLocaleString()});
-localStorage.setItem('gaokao_wrong',JSON.stringify(arr));
-alert('已保存到当前浏览器的本机错题记录');
-}
-function showWrong(){
-let arr=JSON.parse(localStorage.getItem('gaokao_wrong')||'[]');
-document.getElementById('result').textContent=arr.length?arr.map((x,i)=>(i+1)+'. ['+x.subject+'] '+x.q+' ('+x.time+')').join('\n\n'):'目前还没有错题记录。';
-}
-function makePlan(){
-let p=document.getElementById('plan').value;
-document.getElementById('planResult').innerHTML='<p>今日任务：'+p+'</p><p>① 复习知识点 20 分钟</p><p>② 完成练习 30 分钟</p><p>③ 整理错题 10 分钟</p>';
-}
-</script>
-</body>
-</html>
+  <!-- 1. 首页 -->
+  <div class="page active" id="page-home">
+    <div class="card">
+      <div class="card-title">学习数据</div>
+      <div class="stat-grid">
+        <div class="stat-card"><div class="num" id="s-total">0</div><div class="label">总刷题数</div></div>
+        <div class="stat-card"><div class="num" id="s-correct">0%</div><div class="label">正确率</div></div>
+        <div class="stat-card"><div class="num" id="s-wrong">0</div><div class="label">错题本</div></div>
+        <div class="stat-card"><div class="num" id="s-days">1</div><div class="label">连续天数</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">功能入口</div>
+      <div class="func-grid">
+        <div class="func-item" onclick="goPage('knowledge')"><div class="icon">📖</div><div class="name">知识手册</div></div>
+        <div class="func-item" onclick="goPage('experiment')"><div class="icon">🧪</div><div class="name">实验大全</div></div>
+        <div class="func-item" onclick="goPage('type')"><div class="icon">✏️</div><div class="name">题型精讲</div></div>
+        <div class="func-item" onclick="goPage('quiz')"><div class="icon">📝</div><div class="name">刷题中心</div></div>
+        <div class="func-item" onclick="goPage('wrong')"><div class="icon">❌</div><div class="name">错题本</div></div>
+        <div class="func-item" onclick="goPage('summary')"><div class="icon">📋</div><div class="name">考前总结</div></div>
+        <div class="func-item" onclick="goPage('keyboard')"><div class="icon">⌨️</div><div class="name">化学键盘</div></div>
+        <div class="func-item" onclick="goPage('log')"><div class="icon">📓</div><div class="name">学习日志</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. 知识手册 -->
+  <div class="page" id="page-knowledge">
+    <div class="subject-tabs" id="kp-tabs"></div>
+    <div class="card">
+      <div class="card-title">知识点列表</div>
+      <div class="kp-list" id="kp-list"></div>
+    </div>
+  </div>
+
+  <!-- 3. 实验大全 -->
+  <div class="page" id="page-experiment">
+    <div class="subject-tabs" id="exp-tabs"></div>
+    <div id="exp-list"></div>
+  </div>
+
+  <!-- 4. 题型精讲 -->
+  <div class="page" id="page-type">
+    <div class="subject-tabs" id="type-tabs"></div>
+    <div id="type-list"></div>
+  </div>
+
+  <!-- 5. 刷题中心 -->
+  <div class="page" id="page-quiz">
+    <div class="subject-tabs" id="quiz-tabs"></div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;margin-bottom:10px;color:#888;font-size:13px">
+        <span id="quiz-subject-label">全部学科</span>
+        <span>第 <b id="quiz-cur">1</b> / <b id="quiz-all">0</b> 题</span>
+      </div>
+      <div class="question-box">
+        <div class="question-text" id="quiz-q">点击学科标签开始刷题</div>
+        <div class="option-list" id="quiz-opts"></div>
+      </div>
+      <div id="quiz-explain" style="margin-top:14px;padding:12px;background:#f8f9fa;border-radius:10px;font-size:14px;display:none;color:#444"></div>
+      <button class="btn outline" id="quiz-next" style="display:none;margin-top:12px" onclick="quizNext()">下一题</button>
+    </div>
+  </div>
+
+  <!-- 6. 错题本 -->
+  <div class="page" id="page-wrong">
+    <div class="card">
+      <div class="card-title">我的错题本</div>
+      <div id="wrong-list"><p style="color:#999;text-align:center;padding:20px">暂无错题，继续加油！</p></div>
+      <button class="btn danger sm" style="margin-top:12px" onclick="clearWrong()">清空错题本</button>
+    </div>
+  </div>
+
+  <!-- 7. 考前总结 -->
+  <div class="page" id="page-summary">
+    <div class="subject-tabs" id="sum-tabs"></div>
+    <div class="card">
+      <div class="card-title">易错点清单</div>
+      <ul class="summary-list" id="sum-mistakes"></ul>
+    </div>
+    <div class="card">
+      <div class="card-title">冲刺清单</div>
+      <ul class="summary-list" id="sum-checklist"></ul>
+    </div>
+  </div>
+
+  <!-- 8. 化学键盘 -->
+  <div class="page" id="page-keyboard">
+    <div class="card">
+      <div class="card-title">元素符号</div>
+      <div class="kb-section"><div class="kb-keys" id="kb-elements"></div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">常见离子</div>
+      <div class="kb-section"><div class="kb-keys" id="kb-ions"></div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">反应条件与符号</div>
+      <div class="kb-section"><div class="kb-keys" id="kb-symbols"></div></div>
+    </div>
+  </div>
+
+  <!-- 9. 学习日志 -->
+  <div class="page" id="page-log">
+    <div class="card">
+      <div class="card-title">记录今天的学习</div>
+      <textarea class="log-input" id="log-input" placeholder="今天学了什么？有什么收获？"></textarea>
