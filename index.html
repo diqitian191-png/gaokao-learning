@@ -2,262 +2,203 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>高中全学科AI学习助手</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📚 高中学习助手</title>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;background:#f4f6f9;color:#333;font-size:15px;line-height:1.5;display:flex;min-height:100vh}
-
-/* 左侧侧边栏 */
-.sidebar{width:60px;background:linear-gradient(180deg,#667eea 0%,#764ba2 100%);display:flex;flex-direction:column;align-items:center;padding-top:15px;position:fixed;top:0;left:0;height:100%;z-index:200;transition:width .2s;overflow:hidden}
-.sidebar:hover{width:160px}
-.sidebar .logo{font-size:24px;margin-bottom:20px;cursor:pointer}
-.sidebar .nav-btn{width:100%;padding:12px 0;text-align:center;color:rgba(255,255,255,.85);cursor:pointer;font-size:18px;white-space:nowrap;transition:background .15s}
-.sidebar .nav-btn:hover,.sidebar .nav-btn.active{background:rgba(255,255,255,.18);color:#fff}
-.sidebar .nav-btn .nav-text{font-size:14px;margin-left:8px;opacity:0;transition:opacity .15s}
-.sidebar:hover .nav-btn .nav-text{opacity:1}
-
-/* 主内容区 */
-.main{margin-left:60px;flex:1;min-width:0}
-
-/* 顶部header */
-.header{background:#fff;padding:15px 20px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 1px 4px rgba(0,0,0,.06);position:sticky;top:0;z-index:100}
-.header h2{font-size:18px;color:#764ba2}
-.header-right{display:flex;align-items:center;gap:12px}
-.header-stat{font-size:13px;color:#888;background:#f0f4ff;padding:6px 12px;border-radius:20px}
-.header-search{padding:8px 14px;border:1px solid #e0e0e0;border-radius:20px;font-size:13px;width:180px;outline:none}
-.header-search:focus{border-color:#764ba2}
-
-/* 页面容器 */
-.page{display:none;padding:20px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:"PingFang SC","Microsoft YaHei",sans-serif;background:#f0f2f5;color:#333}
+.navbar{background:#1a73e8;color:#fff;padding:14px 20px;font-size:18px;font-weight:bold;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100}
+.navbar span{flex:1;text-align:center}
+.tabbar{position:fixed;bottom:0;left:0;right:0;background:#fff;display:flex;box-shadow:0 -2px 8px rgba(0,0,0,.08);z-index:100}
+.tab-item{flex:1;text-align:center;padding:8px 0 6px;font-size:12px;color:#888;cursor:pointer;transition:.2s}
+.tab-item.active{color:#1a73e8}
+.tab-item .icon{font-size:22px;display:block}
+.page{display:none;padding:16px 16px 80px}
 .page.active{display:block}
-
-/* 卡片 */
-.card{background:#fff;border-radius:14px;padding:18px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
-.card-title{font-size:16px;font-weight:700;margin-bottom:12px;padding-left:10px;border-left:4px solid #764ba2}
-
-/* 统计卡片网格 */
-.stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px}
-.stat-card{background:linear-gradient(135deg,#f0f4ff,#e8ecff);border-radius:12px;padding:16px;text-align:center}
-.stat-card .num{font-size:28px;font-weight:700;color:#764ba2}
-.stat-card .label{font-size:13px;color:#888;margin-top:4px}
-
-/* 功能入口网格 */
-.func-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
-.func-item{background:#fff;border:1px solid #eee;border-radius:12px;padding:20px;text-align:center;cursor:pointer;transition:all .15s}
-.func-item:hover{border-color:#764ba2;transform:translateY(-2px);box-shadow:0 4px 12px rgba(118,75,162,.12)}
-.func-item .icon{font-size:32px;margin-bottom:8px}
-.func-item .name{font-weight:600;font-size:14px}
-
-/* 学科标签 */
-.subject-tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
-.subject-tab{padding:6px 16px;border-radius:20px;font-size:13px;cursor:pointer;background:#f0f0f0;color:#666;border:none;transition:all .15s}
-.subject-tab.active{background:#764ba2;color:#fff}
-
-/* 知识点列表 */
-.kp-list{display:grid;gap:10px}
-.kp-item{background:#fafbfc;border:1px solid #eee;border-radius:10px;padding:14px;cursor:pointer;transition:all .15s}
-.kp-item:hover{border-color:#764ba2;background:#f8f6ff}
-.kp-item .kp-tag{display:inline-block;font-size:11px;background:#764ba2;color:#fff;padding:2px 8px;border-radius:10px;margin-right:8px}
-.kp-item .kp-title{font-weight:600;font-size:15px}
-.kp-item .kp-desc{font-size:13px;color:#888;margin-top:4px}
-
-/* 实验/题型卡片 */
-.exp-card,.type-card{background:#fff;border:1px solid #eee;border-radius:12px;padding:16px;margin-bottom:12px}
-.exp-card h4,.type-card h4{font-size:15px;margin-bottom:8px;color:#764ba2}
-.exp-card p,.type-card p{font-size:14px;color:#555;line-height:1.6}
-
-/* 题目 */
-.question-box{margin-bottom:20px}
-.question-text{font-size:16px;font-weight:500;margin-bottom:14px}
-.option-list{display:flex;flex-direction:column;gap:10px}
-.option{padding:12px 15px;border:1px solid #eee;border-radius:10px;cursor:pointer;background:#fff;transition:all .2s}
-.option.selected{border-color:#764ba2;background:#f3f0ff}
-.option.correct{border-color:#2ed573;background:#eafbf1;color:#059669}
-.option.wrong{border-color:#ff4757;background:#ffeef0;color:#d63031}
-
-/* 按钮 */
-.btn{display:inline-block;padding:10px 24px;background:#764ba2;color:#fff;border:none;border-radius:25px;font-size:14px;font-weight:600;cursor:pointer;transition:background .15s}
-.btn:hover{background:#5f3dc4}
-.btn.outline{background:transparent;border:1px solid #764ba2;color:#764ba2}
-.btn.danger{background:#ff4757}
-.btn.sm{padding:6px 16px;font-size:13px}
-
-/* 化学键盘 */
-.kb-section{margin-bottom:16px}
-.kb-section h4{font-size:14px;margin-bottom:8px;color:#666}
-.kb-keys{display:flex;flex-wrap:wrap;gap:6px}
-.kb-key{padding:8px 12px;background:#f0f4ff;border:1px solid #d0d8ff;border-radius:8px;cursor:pointer;font-size:14px;font-weight:500;transition:all .15s}
-.kb-key:hover{background:#764ba2;color:#fff;border-color:#764ba2}
-
-/* 总结清单 */
-.summary-list{list-style:none}
-.summary-list li{padding:10px 0;border-bottom:1px solid #f0f0f0;font-size:14px;display:flex;align-items:flex-start}
-.summary-list li::before{content:"⚠️";margin-right:8px;flex-shrink:0}
-.summary-list li.ok::before{content:"✅"}
-
-/* 学习日志 */
-.log-input{width:100%;padding:12px;border:1px solid #eee;border-radius:10px;font-size:14px;resize:vertical;min-height:80px;outline:none;margin-bottom:10px}
-.log-input:focus{border-color:#764ba2}
-.log-list{max-height:300px;overflow-y:auto}
-.log-item{padding:10px;border-bottom:1px solid #f5f5f5;font-size:14px}
-.log-item .log-time{font-size:12px;color:#aaa}
-
-/* 错题本 */
-.wrong-item{padding:12px;border-bottom:1px solid #f0f0f0}
-.wrong-item .w-subject{font-size:12px;color:#764ba2;margin-bottom:4px}
-.wrong-item .w-question{font-size:14px;margin-bottom:4px}
-.wrong-item .w-answer{font-size:13px;color:#ff4757}
-.wrong-item .w-explain{font-size:13px;color:#666;margin-top:4px}
-
-/* AI聊天 */
-.chat-box{max-height:300px;overflow-y:auto;margin-bottom:12px;padding:12px;background:#fafbfc;border-radius:10px}
-.chat-msg{margin-bottom:10px;padding:10px 14px;border-radius:12px;font-size:14px;max-width:85%}
-.chat-msg.user{background:#764ba2;color:#fff;margin-left:auto;border-bottom-right-radius:4px}
-.chat-msg.ai{background:#f0f4ff;margin-right:auto;border-bottom-left-radius:4px}
-
-/* 响应式 */
-@media(max-width:600px){
-  .sidebar{width:50px}
-  .sidebar:hover{width:140px}
-  .main{margin-left:50px}
-  .header{flex-wrap:wrap;gap:8px}
-  .header-search{width:100%;order:3}
-  .stat-grid,.func-grid{grid-template-columns:repeat(2,1fr)}
-}
+.card{background:#fff;border-radius:12px;padding:16px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.card-title{font-size:16px;font-weight:bold;margin-bottom:10px;color:#1a73e8}
+.subject-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.subject-btn{background:#e8f0fe;border:none;border-radius:10px;padding:12px 4px;font-size:14px;cursor:pointer;transition:.2s}
+.subject-btn:hover,.subject-btn.active{background:#1a73e8;color:#fff}
+.list-item{padding:12px;border-bottom:1px solid #f0f0f0;cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+.list-item:last-child{border-bottom:none}
+.list-item:hover{background:#f8f9ff}
+.list-item .tag{font-size:11px;background:#e8f0fe;color:#1a73e8;padding:2px 8px;border-radius:10px}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;justify-content:center;align-items:center}
+.modal-overlay.show{display:flex}
+.modal{background:#fff;border-radius:14px;padding:20px;max-width:420px;width:90%;max-height:70vh;overflow-y:auto}
+.modal h3{color:#1a73e8;margin-bottom:10px}
+.modal .close-btn{float:right;background:none;border:none;font-size:20px;cursor:pointer;color:#999}
+.chat-box{height:300px;overflow-y:auto;border:1px solid #eee;border-radius:10px;padding:12px;margin-bottom:10px;background:#fafafa}
+.chat-msg{max-width:80%;padding:10px 14px;border-radius:12px;margin-bottom:8px;font-size:14px;line-height:1.6;word-break:break-all}
+.chat-msg.ai{background:#e8f0fe;border-top-left-radius:2px}
+.chat-msg.user{background:#1a73e8;color:#fff;margin-left:auto;border-top-right-radius:2px}
+.chat-input-row{display:flex;gap:8px}
+.chat-input-row input{flex:1;padding:10px 14px;border:1px solid #ddd;border-radius:20px;outline:none;font-size:14px}
+.chat-input-row button{padding:10px 18px;background:#1a73e8;color:#fff;border:none;border-radius:20px;cursor:pointer;font-size:14px}
+.quiz-option{display:block;width:100%;padding:10px 14px;margin:6px 0;border:1px solid #ddd;border-radius:8px;background:#fff;cursor:pointer;font-size:14px;text-align:left;transition:.2s}
+.quiz-option:hover{border-color:#1a73e8;background:#f0f5ff}
+.quiz-option.correct{background:#e6f4ea;border-color:#34a853;color:#1e7e34}
+.quiz-option.wrong{background:#fce8e6;border-color:#ea4335;color:#c5221f}
+.quiz-score{text-align:center;padding:20px;font-size:18px;color:#1a73e8}
+.search-bar{display:flex;gap:8px;margin-bottom:14px}
+.search-bar input{flex:1;padding:10px 14px;border:1px solid #ddd;border-radius:20px;outline:none;font-size:14px}
+.search-bar button{padding:10px 18px;background:#1a73e8;color:#fff;border:none;border-radius:20px;cursor:pointer}
+.tool-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.tool-btn{background:#fff;border:1px solid #eee;border-radius:12px;padding:16px 8px;text-align:center;cursor:pointer;transition:.2s;font-size:13px}
+.tool-btn:hover{box-shadow:0 2px 8px rgba(26,115,232,.15);border-color:#1a73e8}
+.tool-btn .icon{font-size:28px;display:block;margin-bottom:6px}
 </style>
 </head>
 <body>
 
-<!-- 左侧侧边栏 -->
-<nav class="sidebar">
-  <div class="logo" onclick="goPage('home')">📚</div>
-  <div class="nav-btn active" data-page="home" onclick="goPage('home')"><span>🏠</span><span class="nav-text">首页</span></div>
-  <div class="nav-btn" data-page="knowledge" onclick="goPage('knowledge')"><span>📖</span><span class="nav-text">知识手册</span></div>
-  <div class="nav-btn" data-page="experiment" onclick="goPage('experiment')"><span>🧪</span><span class="nav-text">实验大全</span></div>
-  <div class="nav-btn" data-page="type" onclick="goPage('type')"><span>✏️</span><span class="nav-text">题型精讲</span></div>
-  <div class="nav-btn" data-page="quiz" onclick="goPage('quiz')"><span>📝</span><span class="nav-text">刷题中心</span></div>
-  <div class="nav-btn" data-page="wrong" onclick="goPage('wrong')"><span>❌</span><span class="nav-text">错题本</span></div>
-  <div class="nav-btn" data-page="summary" onclick="goPage('summary')"><span>📋</span><span class="nav-text">考前总结</span></div>
-  <div class="nav-btn" data-page="keyboard" onclick="goPage('keyboard')"><span>⌨️</span><span class="nav-text">化学键盘</span></div>
-  <div class="nav-btn" data-page="log" onclick="goPage('log')"><span>📓</span><span class="nav-text">学习日志</span></div>
-</nav>
+<div class="navbar">📚 高中学习助手 <span id="navTitle">首页</span></div>
 
-<!-- 主内容区 -->
-<div class="main">
-  <!-- 顶部header -->
-  <div class="header">
-    <h2 id="page-title">首页总览</h2>
-    <div class="header-right">
-      <span class="header-stat">今日刷题 <b id="today-count">0</b></span>
-      <input class="header-search" id="global-search" placeholder="搜索知识点/题目..." onkeyup="globalSearch(event)">
+<div id="page-home" class="page active">
+  <div class="card">
+    <div class="card-title">🎯 快速开始</div>
+    <p style="font-size:14px;color:#666;margin-bottom:12px">选择下方功能模块，开始高效学习！</p>
+    <div class="tool-grid">
+      <div class="tool-btn" onclick="switchTab(1)"><span class="icon">📖</span>知识点</div>
+      <div class="tool-btn" onclick="switchTab(2)"><span class="icon">🧪</span>实验手册</div>
+      <div class="tool-btn" onclick="switchTab(3)"><span class="icon">📐</span>解题方法</div>
+      <div class="tool-btn" onclick="switchTab(4)"><span class="icon">📝</span>在线测验</div>
+      <div class="tool-btn" onclick="switchTab(5)"><span class="icon">🤖</span>AI答疑</div>
+      <div class="tool-btn" onclick="switchTab(6)"><span class="icon">🔍</span>全局搜索</div>
     </div>
   </div>
+  <div class="card">
+    <div class="card-title">📅 今日推荐</div>
+    <div class="list-item" onclick="showDetail('数学','函数与导数')"><span>📐 数学 · 函数与导数核心考点</span><span class="tag">高频</span></div>
+    <div class="list-item" onclick="showDetail('英语','高频词汇3500')"><span>🔤 英语 · 核心词汇分类记忆</span><span class="tag">必背</span></div>
+    <div class="list-item" onclick="showDetail('历史','中国近现代史')"><span>📜 历史 · 近现代史时间线</span><span class="tag">重点</span></div>
+    <div class="list-item" onclick="showDetail('日语','基础语法')"><span>🇯🇵 日语 · 基础语法梳理</span><span class="tag">入门</span></div>
+  </div>
+</div>
 
-  <!-- 1. 首页 -->
-  <div class="page active" id="page-home">
-    <div class="card">
-      <div class="card-title">学习数据</div>
-      <div class="stat-grid">
-        <div class="stat-card"><div class="num" id="s-total">0</div><div class="label">总刷题数</div></div>
-        <div class="stat-card"><div class="num" id="s-correct">0%</div><div class="label">正确率</div></div>
-        <div class="stat-card"><div class="num" id="s-wrong">0</div><div class="label">错题本</div></div>
-        <div class="stat-card"><div class="num" id="s-days">1</div><div class="label">连续天数</div></div>
-      </div>
+<div id="page-knowledge" class="page">
+  <div class="card">
+    <div class="card-title">📖 选择学科</div>
+    <div class="subject-grid" id="knowledgeSubjects"></div>
+  </div>
+  <div class="card" id="knowledgeList" style="display:none">
+    <div class="card-title" id="knowledgeListTitle">知识点列表</div>
+    <div id="knowledgeItems"></div>
+  </div>
+</div>
+
+<div id="page-experiment" class="page">
+  <div class="card">
+    <div class="card-title">🧪 选择学科</div>
+    <div class="subject-grid" id="experimentSubjects"></div>
+  </div>
+  <div class="card" id="experimentList" style="display:none">
+    <div class="card-title" id="experimentListTitle">实验列表</div>
+    <div id="experimentItems"></div>
+  </div>
+</div>
+
+<div id="page-method" class="page">
+  <div class="card">
+    <div class="card-title">📐 选择学科</div>
+    <div class="subject-grid" id="methodSubjects"></div>
+  </div>
+  <div class="card" id="methodList" style="display:none">
+    <div class="card-title" id="methodListTitle">方法列表</div>
+    <div id="methodItems"></div>
+  </div>
+</div>
+
+<div id="page-quiz" class="page">
+  <div class="card">
+    <div class="card-title">📝 选择学科</div>
+    <div class="subject-grid" id="quizSubjects"></div>
+  </div>
+  <div class="card" id="quizArea" style="display:none">
+    <div class="card-title" id="quizTitle">测验</div>
+    <div id="quizContent"></div>
+  </div>
+</div>
+
+<div id="page-ai" class="page">
+  <div class="card">
+    <div class="card-title">🤖 AI答疑</div>
+    <div class="chat-box" id="chatBox">
+      <div class="chat-msg ai">你好！我是你的AI学习助手，有任何问题都可以问我～</div>
     </div>
-    <div class="card">
-      <div class="card-title">功能入口</div>
-      <div class="func-grid">
-        <div class="func-item" onclick="goPage('knowledge')"><div class="icon">📖</div><div class="name">知识手册</div></div>
-        <div class="func-item" onclick="goPage('experiment')"><div class="icon">🧪</div><div class="name">实验大全</div></div>
-        <div class="func-item" onclick="goPage('type')"><div class="icon">✏️</div><div class="name">题型精讲</div></div>
-        <div class="func-item" onclick="goPage('quiz')"><div class="icon">📝</div><div class="name">刷题中心</div></div>
-        <div class="func-item" onclick="goPage('wrong')"><div class="icon">❌</div><div class="name">错题本</div></div>
-        <div class="func-item" onclick="goPage('summary')"><div class="icon">📋</div><div class="name">考前总结</div></div>
-        <div class="func-item" onclick="goPage('keyboard')"><div class="icon">⌨️</div><div class="name">化学键盘</div></div>
-        <div class="func-item" onclick="goPage('log')"><div class="icon">📓</div><div class="name">学习日志</div></div>
-      </div>
+    <div class="chat-input-row">
+      <input type="text" id="chatInput" placeholder="输入你的问题..." onkeydown="if(event.key==='Enter')sendChat()">
+      <button onclick="sendChat()">发送</button>
     </div>
   </div>
+</div>
 
-  <!-- 2. 知识手册 -->
-  <div class="page" id="page-knowledge">
-    <div class="subject-tabs" id="kp-tabs"></div>
-    <div class="card">
-      <div class="card-title">知识点列表</div>
-      <div class="kp-list" id="kp-list"></div>
+<div id="page-search" class="page">
+  <div class="card">
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="搜索知识点、实验、方法..." onkeydown="if(event.key==='Enter')doSearch()">
+      <button onclick="doSearch()">搜索</button>
     </div>
+    <div id="searchResults"></div>
   </div>
+</div>
 
-  <!-- 3. 实验大全 -->
-  <div class="page" id="page-experiment">
-    <div class="subject-tabs" id="exp-tabs"></div>
-    <div id="exp-list"></div>
+<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <button class="close-btn" onclick="closeModal()">✕</button>
+    <h3 id="modalTitle"></h3>
+    <div id="modalBody" style="font-size:14px;line-height:1.8;white-space:pre-wrap"></div>
   </div>
+</div>
 
-  <!-- 4. 题型精讲 -->
-  <div class="page" id="page-type">
-    <div class="subject-tabs" id="type-tabs"></div>
-    <div id="type-list"></div>
-  </div>
+<div class="tabbar">
+  <div class="tab-item active" onclick="switchTab(0)"><span class="icon">🏠</span>首页</div>
+  <div class="tab-item" onclick="switchTab(1)"><span class="icon">📖</span>知识点</div>
+  <div class="tab-item" onclick="switchTab(2)"><span class="icon">🧪</span>实验</div>
+  <div class="tab-item" onclick="switchTab(3)"><span class="icon">📐</span>方法</div>
+  <div class="tab-item" onclick="switchTab(4)"><span class="icon">📝</span>测验</div>
+  <div class="tab-item" onclick="switchTab(5)"><span class="icon">🤖</span>AI</div>
+  <div class="tab-item" onclick="switchTab(6)"><span class="icon">🔍</span>搜索</div>
+</div>
 
-  <!-- 5. 刷题中心 -->
-  <div class="page" id="page-quiz">
-    <div class="subject-tabs" id="quiz-tabs"></div>
-    <div class="card">
-      <div style="display:flex;justify-content:space-between;margin-bottom:10px;color:#888;font-size:13px">
-        <span id="quiz-subject-label">全部学科</span>
-        <span>第 <b id="quiz-cur">1</b> / <b id="quiz-all">0</b> 题</span>
-      </div>
-      <div class="question-box">
-        <div class="question-text" id="quiz-q">点击学科标签开始刷题</div>
-        <div class="option-list" id="quiz-opts"></div>
-      </div>
-      <div id="quiz-explain" style="margin-top:14px;padding:12px;background:#f8f9fa;border-radius:10px;font-size:14px;display:none;color:#444"></div>
-      <button class="btn outline" id="quiz-next" style="display:none;margin-top:12px" onclick="quizNext()">下一题</button>
-    </div>
-  </div>
+<script>
+const subjects = ["语文","数学","英语","物理","化学","生物","历史","地理","政治","日语"];
 
-  <!-- 6. 错题本 -->
-  <div class="page" id="page-wrong">
-    <div class="card">
-      <div class="card-title">我的错题本</div>
-      <div id="wrong-list"><p style="color:#999;text-align:center;padding:20px">暂无错题，继续加油！</p></div>
-      <button class="btn danger sm" style="margin-top:12px" onclick="clearWrong()">清空错题本</button>
-    </div>
-  </div>
-
-  <!-- 7. 考前总结 -->
-  <div class="page" id="page-summary">
-    <div class="subject-tabs" id="sum-tabs"></div>
-    <div class="card">
-      <div class="card-title">易错点清单</div>
-      <ul class="summary-list" id="sum-mistakes"></ul>
-    </div>
-    <div class="card">
-      <div class="card-title">冲刺清单</div>
-      <ul class="summary-list" id="sum-checklist"></ul>
-    </div>
-  </div>
-
-  <!-- 8. 化学键盘 -->
-  <div class="page" id="page-keyboard">
-    <div class="card">
-      <div class="card-title">元素符号</div>
-      <div class="kb-section"><div class="kb-keys" id="kb-elements"></div></div>
-    </div>
-    <div class="card">
-      <div class="card-title">常见离子</div>
-      <div class="kb-section"><div class="kb-keys" id="kb-ions"></div></div>
-    </div>
-    <div class="card">
-      <div class="card-title">反应条件与符号</div>
-      <div class="kb-section"><div class="kb-keys" id="kb-symbols"></div></div>
-    </div>
-  </div>
-
-  <!-- 9. 学习日志 -->
-  <div class="page" id="page-log">
-    <div class="card">
-      <div class="card-title">记录今天的学习</div>
-      <textarea class="log-input" id="log-input" placeholder="今天学了什么？有什么收获？"></textarea>
+const knowledgeDB = {
+  "语文":[
+    {title:"文言文实词120个",desc:"高考必考文言实词汇总",detail:"爱、安、被、倍、本、鄙、兵、病、察、朝……建议分类记忆：通假字、古今异义、一词多义。"},
+    {title:"古诗词鉴赏术语",desc:"表现手法、修辞手法、情感术语",detail:"表现手法：借景抒情、托物言志、虚实结合、动静结合、对比、衬托、用典、象征。\n修辞手法：比喻、拟人、夸张、对偶、排比、反复、设问、反问、借代、双关、互文。"},
+    {title:"作文素材积累",desc:"人物素材、名言金句、热点话题",detail:"人物：张桂梅（教育扶贫）、袁隆平（杂交水稻）、苏炳添（突破极限）。\n金句：'追风赶月莫停留，平芜尽处是春山。'"},
+    {title:"现代文阅读答题模板",desc:"作用题、含义题、赏析题套路",detail:"作用题：内容上……；结构上……；情感/主旨上……。\n含义题：表层含义+深层含义。\n赏析题：手法+内容+效果+情感。"}
+  ],
+  "数学":[
+    {title:"函数与导数",desc:"单调性、极值、最值、零点",detail:"求导公式：(xⁿ)'=nxⁿ⁻¹，(sinx)'=cosx，(cosx)'=-sinx，(eˣ)'=eˣ，(lnx)'=1/x。\n单调性：f'(x)>0递增，f'(x)<0递减。\n极值：f'(x)=0且左右变号。"},
+    {title:"三角函数",desc:"诱导公式、和差化积、图像性质",detail:"sin²α+cos²α=1；tanα=sinα/cosα。\nsin(α±β)=sinαcosβ±cosαsinβ；cos(α±β)=cosαcosβ∓sinαsinβ。\nsin2α=2sinαcosα；cos2α=cos²α-sin²α。"},
+    {title:"数列",desc:"等差、等比、求和方法",detail:"等差：an=a₁+(n-1)d；Sn=n(a₁+an)/2。\n等比：an=a₁qⁿ⁻¹；Sn=a₁(1-qⁿ)/(1-q) (q≠1)。\n求和：裂项相消、错位相减、分组求和、倒序相加。"},
+    {title:"立体几何",desc:"空间向量、线面关系",detail:"线面平行：平面外一直线与平面内一直线平行，则线面平行。\n线面垂直：直线与平面内两条相交直线都垂直，则线面垂直。\n空间向量法：建系→求法向量→算夹角/距离。"},
+    {title:"概率统计",desc:"古典概型、分布列、期望方差",detail:"古典概型：P(A)=m/n。\n二项分布：X~B(n,p)，E(X)=np，D(X)=np(1-p)。\n正态分布：3σ原则：P(μ-σ<X<μ+σ)≈68.3%。"}
+  ],
+  "英语":[
+    {title:"高频词汇3500",desc:"高考英语核心词汇分类记忆",detail:"按话题分类记忆：教育类（academic, curriculum, evaluate）、科技类（artificial, digital, innovation）、环境类（conservation, sustainable, emission）。"},
+    {title:"语法重点",desc:"时态、从句、非谓语、虚拟语气",detail:"定语从句：that/which/who/whom/whose/when/where/why。\n名词性从句：that/whether/if/what/who/when/where/why/how。\n非谓语：to do（目的/将来）、doing（主动/进行）、done（被动/完成）。"},
+    {title:"作文模板",desc:"书信、议论文、读后续写",detail:"书信开头：I'm writing to... / I'd like to...\n书信结尾：Looking forward to your reply.\n议论文：观点+理由1+理由2+理由3+总结。"}
+  ],
+  "物理":[
+    {title:"力学核心公式",desc:"牛顿定律、能量、动量",detail:"牛顿第二定律：F=ma。\n动能定理：W=ΔEk=½mv₂²-½mv₁²。\n机械能守恒：Ek₁+Ep₁=Ek₂+Ep₂。\n动量守恒：m₁v₁+m₂v₂=m₁v₁'+m₂v₂'。"},
+    {title:"电磁学",desc:"电场、电路、磁场、电磁感应",detail:"库仑定律：F=kq₁q₂/r²。\n欧姆定律：I=U/R。\n法拉第电磁感应定律：E=nΔΦ/Δt。\n安培力：F=BILsinθ。"},
+    {title:"光学与近代物理",desc:"折射、光电效应、原子结构",detail:"折射定律：n₁sinθ₁=n₂sinθ₂。\n光电效应方程：Ek=hν-W₀。\n质能方程：E=mc²。"}
+  ],
+  "化学":[
+    {title:"元素周期律",desc:"周期表结构、性质递变规律",detail:"同周期从左到右：原子半径减小，金属性减弱，非金属性增强。\n同主族从上到下：原子半径增大，金属性增强，非金属性减弱。\n最高正价=主族序数（O、F除外）。"},
+    {title:"化学反应原理",desc:"速率、平衡、电化学",detail:"勒夏特列原理：改变条件，平衡向减弱这种改变的方向移动。\n原电池：负极氧化，正极还原。\n电解池：阳极氧化，阴极还原。"},
+    {title:"有机化学",desc:"官能团、反应类型、同分异构",detail:"烷烃取代、烯烃加成、醇氧化成醛/酸、酯化反应。\n同分异构体书写：碳链异构→位置异构→官能团异构。"}
+  ],
+  "生物":[
+    {title:"细胞结构与功能",desc:"细胞器、细胞膜、细胞核",detail:"细胞膜：流动镶嵌模型，功能为控制物质进出、信息交流。\n线粒体：有氧呼吸主要场所，'动力车间'。\n叶绿体：光合作用场所，'养料制造车间'。\n核糖体：蛋白质合成场所。\n内质网：蛋白质加工、脂质合成。\n高尔基体：蛋白质加工、分类、包装。"},
+    {title:"遗传与变异",desc:"孟德尔定律、DNA、基因表达",detail:"分离定律：等位基因随同源染色体分开而分离。\n自由组合定律：非等位基因自由组合。\nDNA复制：半保留复制。\n转录：DNA→mRNA；翻译：mRNA→蛋白质。\n中心法则：DNA→RNA→蛋白质。"},
+    {title:"稳态与调节",desc:"神经调节、体液调节、免疫调节",detail:"反射弧：感受器→传入神经→神经中枢→传出神经→效应器。\n胰岛素：降血糖；胰高血糖素：升血糖。\n特异性免疫：体液免疫（B细胞→抗体）+细胞免疫（T细胞）。"},
+    {title:"生态与环境",desc:"种群、群落、生态系统",detail:"种群数量变化：J型增长、S型增长（K值）。\n群落演替：初生演替、次生演替。\n生态系统功能：能量流动（单向递减）、物质循环、信息传递。\n生物多样性：基因、物种、生态系统三个层次。"}
+  ],
+  "历史":[
+    {title:"中国近现代史",desc:"从鸦片战争到新中国成立",detail:"1840 鸦片战争 → 1851 太平天国 → 1861 洋务运动 → 1894 甲午战争 → 1898 戊戌变法 → 1900 八国联军 → 1911 辛亥革命 → 1919 五四运动 → 1921 中共一大 → 1931 九一八事变 → 1937 全面抗战 → 1945 抗战胜利 → 1949 新中国成立。"},
+    {title:"中国古代史",desc:"朝代更替与制度演变",detail:"夏→商→西周（分封制、宗法制）→春秋战国（百家争鸣）→秦（郡县制、中央集权）→汉（独尊儒术）→魏晋南北朝（民族融合）→隋唐（三省六部、科举制）→宋（重文轻
