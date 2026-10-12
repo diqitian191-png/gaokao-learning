@@ -43,6 +43,9 @@ h1{font-size:19px;text-align:center;padding:20px 0;background:linear-gradient(13
 .kn-n{font-weight:600;color:#1a2032;margin-bottom:4px}
 .kn-c{color:#374151;font-size:14px}
 h3.kn-title{color:var(--c);margin-bottom:10px;font-size:15px}
+.mod-btn{display:block;width:100%;text-align:left;border:0;background:none;padding:4px 0;font-size:16px;font-weight:600;font-family:inherit;cursor:pointer}
+.mod-btn:active{color:#3b6ef6}
+.mod-count{color:#9ca3af;font-weight:400;font-size:13px;margin-left:4px}
 </style>
 </head>
 <body>
@@ -59,7 +62,7 @@ h3.kn-title{color:var(--c);margin-bottom:10px;font-size:15px}
 <script>
 var WORKER_URL='https://rough-grass-fa3a.diqitian191.workers.dev';
 var SUBJ={chinese:{n:'语文',i:'语',c:'#e0565b'},math:{n:'数学',i:'数',c:'#3b6ef6'},english:{n:'英语',i:'英',c:'#7c4dff'},physics:{n:'物理',i:'物',c:'#0ea5e9'},chemistry:{n:'化学',i:'化',c:'#10b981'},biology:{n:'生物',i:'生',c:'#65a30d'},politics:{n:'政治',i:'政',c:'#f59e0b'},history:{n:'历史',i:'史',c:'#b45309'},geography:{n:'地理',i:'地',c:'#0891b2'},japanese:{n:'高考日语',i:'日',c:'#ec4899'}};
-var view='home',currentSubj='math',qs=null;
+var view='home',currentSubj='math',currentModule=0,qs=null;
 function lsGet(k,d){try{var v=JSON.parse(localStorage.getItem(k));return v===null?d:v}catch(e){return d}}
 function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
 function esc(s){return String(s).replace(/[&<>"]/g,function(c){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]})}
@@ -74,6 +77,7 @@ else if(view==='quiz')renderQuiz();
 else if(view==='wrong')renderWrong();
 else if(view==='more')renderMore();
 else if(view==='knowledge')renderKnowledge();
+else if(view==='module')renderModule();
 }
 function renderHome(){
 var html='<div class="grid">';
@@ -96,19 +100,29 @@ function showKnowledge(k){currentSubj=k;view='knowledge';render()}
 function renderKnowledge(){
 var s=SUBJ[currentSubj];var kn=(typeof KNOWLEDGE!=='undefined'&&KNOWLEDGE[currentSubj])?KNOWLEDGE[currentSubj]:[];
 var html='<button class="btn" onclick="go(\'subject\')">返回</button>';
-html+='<div class="panel"><h2>'+s.n+' · 知识点</h2><p class="muted">共 '+kn.length+' 个模块</p></div>';
+html+='<div class="panel"><h2>'+s.n+' · 知识点</h2><p class="muted">共 '+kn.length+' 个模块，点进去看详细内容</p></div>';
 if(!kn.length){html+='<div class="panel"><p class="muted">该学科暂无知识点</p></div>';}
 else{
 for(var i=0;i<kn.length;i++){
 var m=kn[i];
-html+='<div class="panel" style="--c:'+s.c+'"><h3 class="kn-title">'+esc(m.t)+'</h3>';
+html+='<div class="panel" style="--c:'+s.c+'"><button class="mod-btn" style="color:'+s.c+'" onclick="openModule('+i+')">'+esc(m.t)+'<span class="mod-count">（'+m.items.length+' 条）</span></button></div>';
+}
+}
+document.getElementById('app').innerHTML=html;
+}
+function openModule(i){currentModule=i;view='module';render()}
+function renderModule(){
+var s=SUBJ[currentSubj];var kn=(typeof KNOWLEDGE!=='undefined'&&KNOWLEDGE[currentSubj])?KNOWLEDGE[currentSubj]:[];
+if(!kn[currentModule]){go('knowledge');return}
+var m=kn[currentModule];
+var html='<button class="btn" onclick="go(\'knowledge\')">← 返回知识点列表</button>';
+html+='<div class="panel" style="--c:'+s.c+'"><h2 style="color:'+s.c+';font-size:17px">'+esc(m.t)+'</h2><p class="muted">'+m.items.length+' 条</p></div>';
+html+='<div class="panel">';
 for(var j=0;j<m.items.length;j++){
 var it=m.items[j];
 html+='<div class="kn-item"><p class="kn-n">'+esc(it.n)+'</p><p class="kn-c">'+esc(it.c)+'</p></div>';
 }
 html+='</div>';
-}
-}
 document.getElementById('app').innerHTML=html;
 }
 function startQuiz(){
