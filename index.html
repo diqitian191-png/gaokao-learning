@@ -53,6 +53,7 @@ details.acc[open] summary .arrow{transform:rotate(180deg)}
 .demo input[type=range]{vertical-align:middle;width:110px}
 .demo-info{margin-top:8px;font-size:13px;color:#374151;background:#fff;padding:6px 10px;border-radius:6px}
 .demo canvas{display:block;margin:8px auto;background:#fff;border-radius:6px;max-width:100%;border:1px solid #e5e7eb}
+.demo svg{display:block;margin:8px auto;background:#fff;border-radius:6px;max-width:100%}
 </style>
 </head>
 <body>
@@ -81,6 +82,7 @@ details.acc[open] summary .arrow{transform:rotate(180deg)}
 <script src="math-demos.js"></script>
 <script src="math-demos-2.js"></script>
 <script src="math-demos-3.js"></script>
+<script src="physics-demos.js"></script>
 <script src="bank-chinese-1.js"></script>
 <script src="bank-chinese-2.js"></script>
 <script src="bank-chinese-3.js"></script>
@@ -176,6 +178,7 @@ for(var k in SUBJ){var sk=SUBJ[k];
 html+='<button class="card" style="--c:'+sk.c+';'+(k===demoSubject?'border:2px solid '+sk.c:'')+'" onclick="switchDemo(\''+k+'\')"><span class="ico">'+sk.i+'</span><b>'+sk.n+'</b><small>动态演示</small></button>';
 }
 html+='</div>';
+
 if(demoSubject==='math'){
 html+='<div class="panel"><h3 style="color:#3b6ef6;margin-bottom:12px">数学动态演示</h3>';
 if(typeof MATH_DEMOS!=='undefined'){
@@ -188,7 +191,17 @@ html+='<div class="panel"><p class="muted">math-demos.js 未加载</p></div>';
 }
 html+='</div>';
 }
+
+if(demoSubject==='physics'){
+html+='<div class="panel"><h3 style="color:#0ea5e9;margin-bottom:12px">物理动态演示</h3>';
+html+='<div class="demo-box"><h4>🎬 自由落体</h4><div id="phys-freefall"></div></div>';
+html+='<div class="demo-box"><h4>🎬 平抛运动</h4><div id="phys-projectile"></div></div>';
+html+='<div class="demo-box"><h4>🎬 简谐运动</h4><div id="phys-shm"></div></div>';
+html+='</div>';
+}
+
 document.getElementById('app').innerHTML=html;
+
 if(demoSubject==='math'&&typeof MATH_DEMOS!=='undefined'){
 setTimeout(function(){
 var keys=Object.keys(MATH_DEMOS);
@@ -203,6 +216,14 @@ catch(e){console.error('演示出错:',k,e);}
 });
 },120);
 },50);
+}
+
+if(demoSubject==='physics'&&typeof renderPhysicsDemo==='function'){
+setTimeout(function(){
+renderPhysicsDemo('phys-freefall','freefall');
+renderPhysicsDemo('phys-projectile','projectile');
+renderPhysicsDemo('phys-shm','shm');
+},120);
 }
 }
 function switchDemo(k){demoSubject=k;renderDemo();}
@@ -337,4 +358,4 @@ document.getElementById('app').innerHTML=html;
 go('home');
 </script>
 </body>
-  </html>
+</html>
