@@ -78,6 +78,7 @@ details.acc[open] summary .arrow{transform:rotate(180deg)}
 <script src="knowledge-politics.js"></script>
 <script src="knowledge-history.js"></script>
 <script src="knowledge-geography.js"></script>
+<script src="knowledge-geography-2.js"></script>
 <script src="knowledge-japanese.js"></script>
 <script src="math-demos.js"></script>
 <script src="math-demos-2.js"></script>
@@ -163,7 +164,9 @@ var m=kn[i];
 html+='<details class="panel acc" style="--c:'+s.c+'"><summary><span style="color:'+s.c+';font-weight:600;font-size:16px">'+esc(m.t)+'</span><span style="color:#9ca3af;font-weight:400;font-size:13px">'+m.items.length+' 条 <span class="arrow">▾</span></span></summary><div style="margin-top:12px">';
 for(var j=0;j<m.items.length;j++){
 var it=m.items[j];
-html+='<div class="kn-item"><p class="kn-n">'+esc(it.n)+'</p><p class="kn-c">'+esc(it.c)+'</p></div>';
+html+='<div class="kn-item"><p class="kn-n">'+esc(it.n)+'</p><p class="kn-c">'+esc(it.c)+'</p>';
+if(it.v)html+='<a class="btn small" href="'+esc(it.v)+'" target="_blank" rel="noopener" style="text-decoration:none;margin-top:6px;display:inline-block">🎬 看视频</a>';
+html+='</div>';
 }
 html+='</div></details>';
 }
@@ -197,6 +200,17 @@ html+='<div class="panel"><h3 style="color:#0ea5e9;margin-bottom:12px">物理动
 html+='<div class="demo-box"><h4>🎬 自由落体</h4><div id="phys-freefall"></div></div>';
 html+='<div class="demo-box"><h4>🎬 平抛运动</h4><div id="phys-projectile"></div></div>';
 html+='<div class="demo-box"><h4>🎬 简谐运动</h4><div id="phys-shm"></div></div>';
+html+='</div>';
+}
+
+if(demoSubject==='geography'){
+html+='<div class="panel"><h3 style="color:#0891b2;margin-bottom:12px">地理动态演示（视频）</h3>';
+html+='<p class="muted" style="margin-bottom:10px">点按钮跳转 B站看动画视频</p>';
+html+='<div class="demo-box"><h4>🎬 三圈环流</h4><p class="muted">气压带和风带的形成原理</p><a class="btn small p" href="https://b23.tv/JhRWUxJ" target="_blank" rel="noopener" style="text-decoration:none;margin-top:8px;display:inline-block">去看视频</a></div>';
+html+='<div class="demo-box"><h4>🎬 世界表层洋流</h4><p class="muted">全球洋流分布规律</p><a class="btn small p" href="https://b23.tv/SEPNPhd" target="_blank" rel="noopener" style="text-decoration:none;margin-top:8px;display:inline-block">去看视频</a></div>';
+html+='<div class="demo-box"><h4>🎬 季风环流</h4><p class="muted">三分钟学会季风环流</p><a class="btn small p" href="https://b23.tv/MZfOtms" target="_blank" rel="noopener" style="text-decoration:none;margin-top:8px;display:inline-block">去看视频</a></div>';
+html+='<div class="demo-box"><h4>🎬 锋面气旋</h4><p class="muted">地理小课堂：锋面气旋</p><a class="btn small p" href="https://b23.tv/NNGGojM" target="_blank" rel="noopener" style="text-decoration:none;margin-top:8px;display:inline-block">去看视频</a></div>';
+html+='<div class="demo-box"><h4>🎬 昼夜长短变化（16合集）</h4><p class="muted">太阳直射点、昼夜变化、地球运动、岩石圈等动画</p><a class="btn small p" href="https://b23.tv/nOMXqKp" target="_blank" rel="noopener" style="text-decoration:none;margin-top:8px;display:inline-block">去看视频</a></div>';
 html+='</div>';
 }
 
