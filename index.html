@@ -60,6 +60,7 @@ details.acc[open] summary .arrow{transform:rotate(180deg)}
 <button id="t-home" onclick="go('home')">🏠 首页</button>
 <button id="t-quiz" onclick="go('quiz')">📝 刷题</button>
 <button id="t-wrong" onclick="go('wrong')">📕 错题</button>
+<button id="t-demo" onclick="go('demo')">🎬 动态</button>
 <button id="t-more" onclick="go('more')">⋯ 更多</button>
 </div>
 <script src="bank.js"></script>
@@ -111,7 +112,7 @@ details.acc[open] summary .arrow{transform:rotate(180deg)}
 <script>
 var WORKER_URL='https://rough-grass-fa3a.diqitian191.workers.dev';
 var SUBJ={chinese:{n:'语文',i:'语',c:'#e0565b'},math:{n:'数学',i:'数',c:'#3b6ef6'},english:{n:'英语',i:'英',c:'#7c4dff'},physics:{n:'物理',i:'物',c:'#0ea5e9'},chemistry:{n:'化学',i:'化',c:'#10b981'},biology:{n:'生物',i:'生',c:'#65a30d'},politics:{n:'政治',i:'政',c:'#f59e0b'},history:{n:'历史',i:'史',c:'#b45309'},geography:{n:'地理',i:'地',c:'#0891b2'},japanese:{n:'高考日语',i:'日',c:'#ec4899'}};
-var view='home',currentSubj='math',qs=null;
+var view='home',currentSubj='math',qs=null,demoSubject='math';
 function lsGet(k,d){try{var v=JSON.parse(localStorage.getItem(k));return v===null?d:v}catch(e){return d}}
 function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
 function esc(s){return String(s).replace(/[&<>"]/g,function(c){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]})}
@@ -126,6 +127,7 @@ else if(view==='quiz')renderQuiz();
 else if(view==='wrong')renderWrong();
 else if(view==='more')renderMore();
 else if(view==='knowledge')renderKnowledge();
+else if(view==='demo')renderDemo();
 }
 function renderHome(){
 var html='<div class="grid">';
@@ -151,40 +153,53 @@ var html='<button class="btn" onclick="go(\'subject\')">返回</button>';
 html+='<div class="panel"><h2>'+s.n+' · 知识点</h2><p class="muted">共 '+kn.length+' 个模块，点击展开</p></div>';
 if(!kn.length){html+='<div class="panel"><p class="muted">该学科暂无知识点</p></div>';}
 else{
-var pendingDemos=[];
 for(var i=0;i<kn.length;i++){
 var m=kn[i];
-var demoKey='';
-if(currentSubj==='math'){
-if(m.t.indexOf('二次')>=0||m.t.indexOf('函数与导数')>=0)demoKey='quadratic';
-else if(m.t.indexOf('三角')>=0)demoKey='trig';
-else if(m.t.indexOf('导数')>=0)demoKey='derivative';
-}
 html+='<details class="panel acc" style="--c:'+s.c+'"><summary><span style="color:'+s.c+';font-weight:600;font-size:16px">'+esc(m.t)+'</span><span style="color:#9ca3af;font-weight:400;font-size:13px">'+m.items.length+' 条 <span class="arrow">▾</span></span></summary><div style="margin-top:12px">';
-if(demoKey){
-html+='<div id="demo-'+demoKey+'-'+i+'"></div>';
-pendingDemos.push({key:demoKey,id:'demo-'+demoKey+'-'+i});
-}
 for(var j=0;j<m.items.length;j++){
 var it=m.items[j];
 html+='<div class="kn-item"><p class="kn-n">'+esc(it.n)+'</p><p class="kn-c">'+esc(it.c)+'</p></div>';
 }
 html+='</div></details>';
 }
-document.getElementById('app').innerHTML=html;
-for(var p=0;p<pendingDemos.length;p++){
-(function(pd){
-var el=document.getElementById(pd.id);
-if(el&&typeof renderMathDemo==='function'){
-el.innerHTML=renderMathDemo(pd.key);
-setTimeout(function(){initMathDemo(pd.key);},50);
-}
-})(pendingDemos[p]);
-}
-return;
 }
 document.getElementById('app').innerHTML=html;
 }
+function renderDemo(){
+var s=SUBJ[demoSubject];
+var html='<h2 class="h2" style="margin-bottom:10px">🎬 动态演示</h2>';
+html+='<p class="muted" style="margin-bottom:12px">选择学科，拖动滑块看变化</p>';
+html+='<div class="grid" style="margin-bottom:14px">';
+for(var k in SUBJ){var sk=SUBJ[k];
+html+='<button class="card" style="--c:'+sk.c+';'+(k===demoSubject?'border:2px solid '+sk.c:'')+'" onclick="switchDemo(\''+k+'\')"><span class="ico">'+sk.i+'</span><b>'+sk.n+'</b><small>动态演示</small></button>';
+}
+html+='</div>';
+if(demoSubject==='math'){
+html+='<div class="panel"><h3 style="color:#3b6ef6;margin-bottom:12px">数学动态演示</h3>';
+if(typeof MATH_DEMOS!=='undefined'){
+for(var key in MATH_DEMOS){
+var d=MATH_DEMOS[key];
+html+='<div class="demo-box"><h4>🎬 '+d.t+'</h4><div id="demo-container-'+key+'"></div></div>';
+}
+}else{
+html+='<div class="panel"><p class="muted">math-demos.js 未加载</p></div>';
+}
+html+='</div>';
+}
+document.getElementById('app').innerHTML=html;
+if(demoSubject==='math'&&typeof MATH_DEMOS!=='undefined'){
+for(var key2 in MATH_DEMOS){
+(function(k2){
+var c=document.getElementById('demo-container-'+k2);
+if(c){
+c.innerHTML=MATH_DEMOS[k2].html;
+setTimeout(function(){initMathDemo(k2);},50);
+}
+})(key2);
+}
+}
+}
+function switchDemo(k){demoSubject=k;renderDemo();}
 function startQuiz(){
 var bank=BANK[currentSubj]||[];
 if(!bank.length){alert('该学科暂无题目');return}
