@@ -29,6 +29,7 @@ h1{font-size:19px;text-align:center;padding:20px 0;background:linear-gradient(13
 .btn:active{background:#f0f4ff}
 .btn.p{background:#3b6ef6;color:#fff;border-color:#3b6ef6}
 .btn.d{color:#dc2626;border-color:#f5c9c9}
+.btn.small{padding:6px 12px;font-size:13px;min-height:34px}
 .muted{color:#6b7280;font-size:13px}
 .pill{display:inline-block;padding:2px 10px;border-radius:999px;font-size:12px;background:var(--c);color:#fff;margin-right:6px}
 .tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:999px;background:#eef2fb;color:#5a6b96;margin-right:4px}
@@ -78,6 +79,7 @@ details.acc[open] summary .arrow{transform:rotate(180deg)}
 <script src="knowledge-geography.js"></script>
 <script src="knowledge-japanese.js"></script>
 <script src="math-demos.js"></script>
+<script src="math-demos-2.js"></script>
 <script src="bank-chinese-1.js"></script>
 <script src="bank-chinese-2.js"></script>
 <script src="bank-chinese-3.js"></script>
@@ -193,7 +195,7 @@ for(var key2 in MATH_DEMOS){
 var c=document.getElementById('demo-container-'+k2);
 if(c){
 c.innerHTML=MATH_DEMOS[k2].html;
-setTimeout(function(){initMathDemo(k2);},50);
+setTimeout(function(){if(typeof initMathDemo==='function')initMathDemo(k2);},50);
 }
 })(key2);
 }
