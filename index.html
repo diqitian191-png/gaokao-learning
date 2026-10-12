@@ -52,7 +52,7 @@ details.acc[open] summary .arrow{transform:rotate(180deg)}
 .demo label{display:inline-block;margin-right:12px;font-size:13px;margin-bottom:4px}
 .demo input[type=range]{vertical-align:middle;width:110px}
 .demo-info{margin-top:8px;font-size:13px;color:#374151;background:#fff;padding:6px 10px;border-radius:6px}
-.demo canvas{display:block;margin:8px auto;background:#fff;border-radius:6px;max-width:100%}
+.demo canvas{display:block;margin:8px auto;background:#fff;border-radius:6px;max-width:100%;min-height:150px;border:1px solid #e5e7eb}
 </style>
 </head>
 <body>
@@ -168,7 +168,6 @@ html+='</div></details>';
 document.getElementById('app').innerHTML=html;
 }
 function renderDemo(){
-var s=SUBJ[demoSubject];
 var html='<h2 class="h2" style="margin-bottom:10px">🎬 动态演示</h2>';
 html+='<p class="muted" style="margin-bottom:12px">选择学科，拖动滑块看变化</p>';
 html+='<div class="grid" style="margin-bottom:14px">';
@@ -195,7 +194,7 @@ for(var key2 in MATH_DEMOS){
 var c=document.getElementById('demo-container-'+k2);
 if(c){
 c.innerHTML=MATH_DEMOS[k2].html;
-setTimeout(function(){if(typeof initMathDemo==='function')initMathDemo(k2);},50);
+setTimeout(function(){if(typeof initMathDemo==='function')initMathDemo(k2);},80);
 }
 })(key2);
 }
