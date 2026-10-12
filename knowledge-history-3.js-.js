@@ -1,7 +1,3 @@
-// knowledge-history-2.js
-var KNOWLEDGE = KNOWLEDGE || {};
-KNOWLEDGE.history = KNOWLEDGE.history || [];
-
 KNOWLEDGE.history = KNOWLEDGE.history.concat([
   { t: '中国古代重大事件·影响', items: [
     { n: '秦朝统一的影响', c: '【政治】建立中国第一个统一多民族国家，确立专制主义中央集权制度；【经济】统一货币度量衡，促进经济交流；【文化】统一文字，促进文化认同。' },
