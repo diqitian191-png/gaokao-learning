@@ -46,6 +46,12 @@ details.acc summary{list-style:none;cursor:pointer}
 details.acc summary::-webkit-details-marker{display:none}
 details.acc summary .arrow{transition:transform .2s;display:inline-block}
 details.acc[open] summary .arrow{transform:rotate(180deg)}
+.demo-box{background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:12px;margin-bottom:12px}
+.demo-box h4{color:#3b6ef6;font-size:15px;margin-bottom:8px}
+.demo label{display:inline-block;margin-right:12px;font-size:13px;margin-bottom:4px}
+.demo input[type=range]{vertical-align:middle;width:110px}
+.demo-info{margin-top:8px;font-size:13px;color:#374151;background:#fff;padding:6px 10px;border-radius:6px}
+.demo canvas{display:block;margin:8px auto;background:#fff;border-radius:6px;max-width:100%}
 </style>
 </head>
 <body>
@@ -60,6 +66,8 @@ details.acc[open] summary .arrow{transform:rotate(180deg)}
 <script>var KNOWLEDGE={};</script>
 <script src="knowledge-chinese.js"></script>
 <script src="knowledge-math.js"></script>
+<script src="knowledge-math-2.js"></script>
+<script src="knowledge-math-3.js"></script>
 <script src="knowledge-english.js"></script>
 <script src="knowledge-physics.js"></script>
 <script src="knowledge-chemistry.js"></script>
@@ -68,6 +76,7 @@ details.acc[open] summary .arrow{transform:rotate(180deg)}
 <script src="knowledge-history.js"></script>
 <script src="knowledge-geography.js"></script>
 <script src="knowledge-japanese.js"></script>
+<script src="math-demos.js"></script>
 <script src="bank-chinese-1.js"></script>
 <script src="bank-chinese-2.js"></script>
 <script src="bank-chinese-3.js"></script>
@@ -142,15 +151,37 @@ var html='<button class="btn" onclick="go(\'subject\')">返回</button>';
 html+='<div class="panel"><h2>'+s.n+' · 知识点</h2><p class="muted">共 '+kn.length+' 个模块，点击展开</p></div>';
 if(!kn.length){html+='<div class="panel"><p class="muted">该学科暂无知识点</p></div>';}
 else{
+var pendingDemos=[];
 for(var i=0;i<kn.length;i++){
 var m=kn[i];
+var demoKey='';
+if(currentSubj==='math'){
+if(m.t.indexOf('二次')>=0||m.t.indexOf('函数与导数')>=0)demoKey='quadratic';
+else if(m.t.indexOf('三角')>=0)demoKey='trig';
+else if(m.t.indexOf('导数')>=0)demoKey='derivative';
+}
 html+='<details class="panel acc" style="--c:'+s.c+'"><summary><span style="color:'+s.c+';font-weight:600;font-size:16px">'+esc(m.t)+'</span><span style="color:#9ca3af;font-weight:400;font-size:13px">'+m.items.length+' 条 <span class="arrow">▾</span></span></summary><div style="margin-top:12px">';
+if(demoKey){
+html+='<div id="demo-'+demoKey+'-'+i+'"></div>';
+pendingDemos.push({key:demoKey,id:'demo-'+demoKey+'-'+i});
+}
 for(var j=0;j<m.items.length;j++){
 var it=m.items[j];
 html+='<div class="kn-item"><p class="kn-n">'+esc(it.n)+'</p><p class="kn-c">'+esc(it.c)+'</p></div>';
 }
 html+='</div></details>';
 }
+document.getElementById('app').innerHTML=html;
+for(var p=0;p<pendingDemos.length;p++){
+(function(pd){
+var el=document.getElementById(pd.id);
+if(el&&typeof renderMathDemo==='function'){
+el.innerHTML=renderMathDemo(pd.key);
+setTimeout(function(){initMathDemo(pd.key);},50);
+}
+})(pendingDemos[p]);
+}
+return;
 }
 document.getElementById('app').innerHTML=html;
 }
